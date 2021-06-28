@@ -144,9 +144,9 @@ function onPayPni(checkout_products){
 		lineItems: checkout_products,
 		mode: 'payment',
 		// la page de succès
-		successUrl: 'https://e-commerce-75312555.netlify.app/succes',
+		successUrl: 'https://astraleagle.github.io/vueJS_Exo/succes',
 		// la page d'erreur
-		cancelUrl: 'https://e-commerce-75312555.netlify.app/error',
+		cancelUrl: 'https://astraleagle.github.io/vueJS_Exo/error',
     }).then(function (result) {
 		// If `redirectToCheckout` fails due to a browser or network
 		// error, display the localized error message to your customer
