@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+    <head>
+        <meta charset="utf-8" />
+        <!-- utile pour le responsive -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://js.stripe.com/v3/"></script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+        <title>Play's Game</title>
+
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+
+        <!-- lien vers le style CSS -->
+        <link rel="stylesheet" href="style.css" />
+
+    </head>
+<!--  -->
+    <body>
+        <div id="app">
+            <!-- header du site-->
+            <header>
+                <p id="logo" @click="page = 'list'">Play's Game</p>
+
+                <img src="panier.png" @click="page = 'cart'" v-if="page != 'cart'" id="panierButt">
+                <img src="retour.png" @click="page = 'list'" v-if="page != 'list'" id="returnButt">
+
+            </header>
+
+            <!-- section list album -->
+            <section class="page" v-if="page == 'list'">
+                <div id="pageListAlbum">
+                    <div  @click="goToProduct(product)" v-for="product in all_products" class="albumCadre">
+                        <img class="img_cover" v-if="product.fields.src_img" :src="product.fields.src_img[0].url">
+                        <div class="infoList">
+                            <div>
+                                <p class="titleList">{{ product.fields.title }}</p>
+                                <p class="artisteList">{{ product.fields.editeur}}</p>
+                            </div>
+                            <p class="priceList">{{ product.fields.price }}€</p>
+                        </div>                    
+                    </div>
+                </div>
+            </section>
+
+            <!-- section detail Jeu -->
+            <section class="page" v-if="page == 'detail'" id="pageDetailAlbum">
+                <div id="pageInfoAlbum">
+                    <img id="imgInfo" v-if="currentProduct.fields.src_img" :src="currentProduct.fields.src_img[0].url">
+                    <div id="infoDetail">
+                        <p id="titleDetail">{{ currentProduct.fields.title }}</p>
+                        <div id="titleInfoDetail">
+                            <p id="artisteDetail">par {{ currentProduct.fields.editeur }}</p>
+                            <p id="priceDetail">{{currentProduct.fields.price}} €</p>
+                        </div>
+                        <div id="infoJeuDetail">  
+                            <p id="synopsisDetail">Synopsis:<br><br>{{ currentProduct.fields.synopsis }}</p>
+                        </div>
+                    </div>
+                    <div id="addPanierDetail">
+                        <p :id="onStockStyle">{{currentProductSotck}}</p>
+                        <div id="infoPriceDetail">
+                            <input @input="setPriceDetail()" v-if="onStockStyle == 'onStock'" type="number" v-model="nbrCopie" id="nbrCopieDetail">
+                            <p v-if="onStockStyle == 'onStock'" id="priceInfo">{{currentProductPrice}} €</p>
+                        </div>
+                        <button @click="addProdPannier()" v-if="onStockStyle == 'onStock' && boolAdd" id="addPanier">Ajouter au panier</button>
+                    </div>
+                </div>
+                
+            </section>
+
+            <!-- section panier -->
+            <section class="page" v-if="page == 'cart'">
+                <h2>Votre panier</h2>
+                <div id="listPanier">
+                    <div v-for="product in list_panier" class="prod_pni">
+                        <div class="item_pni">
+                            <img class="img_pni" v-if="product.fields.src_img" :src="product.fields.src_img[0].url">
+                            <div class="info_pni">
+                                <p class="title_pni">{{product.fields.title}}</p>
+                                <p class="artiste_pni">par {{product.fields.editeur}}</p>
+                                <p>{{product.fields.price}} €</p>
+                                <div class="infoCount_pni">
+                                    <p class="quantit_pni">Quantité: <input class="nbrCopie_pni" @input="setNbrCopiPanier(product)" type="number" v-model="product.quantit"></p>
+                                    <img class="supp_pni" @click="deletProdPanier(product)" src="suppProd.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="infoPanier" v-if='list_panier.length > 0'>
+                    <p>Votre panier est de {{ panierPrice }}€</p>
+                    <button @click='onPay()'>Valider ma commande</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- les scripts JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="script.js"></script>
+
+    </body>
+
+</html>
